@@ -45,5 +45,4 @@ const mainJS = {
 	}
 };
 
-// module.exports = [headJS, mainJS];
-module.exports = headJS;
+module.exports = [headJS, mainJS];
