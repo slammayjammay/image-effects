@@ -20,20 +20,25 @@ html, body {
 	}
 }
 
-.submit {
-	display: none; // hide at first
-	float: left;
-	margin-left: 15px;
-	top: 0;
-	left: 0;
-	padding: 10px 15px;
-	background: green;
-	font-size: 24px;
+.submit-container {
+	position: absolute;
 
-	&:hover {
-		cursor: pointer;
+	.submit {
+		display: none; // hide at first
+		float: left;
+		margin-left: 15px;
+		top: 0;
+		left: 0;
+		padding: 10px 15px;
+		background: green;
+		font-size: 24px;
+
+		&:hover {
+			cursor: pointer;
+		}
 	}
 }
+
 
 .canvas {
 	position: absolute;
