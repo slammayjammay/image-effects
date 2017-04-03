@@ -4,7 +4,7 @@
   "main": "main.js",
   "scripts": {
     "build": "webpack && npm run vendor",
-    "bundle": "electron-packager . image-effects --out=out",
+    "bundle": "rm -rf out && electron-packager . image-effects --out=out",
     "electron": "electron .",
     "vendor": "cp vendor/dat.gui.min.js dist/dat.gui.min.js",
     "watch": "webpack --watch -d"
@@ -16,6 +16,7 @@
   "author": "Scott McKenzie",
   "license": "ISC",
   "dependencies": {
+    "fluent-ffmpeg": "^2.1.0",
     "image-size": "^0.5.1",
     "postprocessing": "^2.1.0",
     "three": "^0.84.0"

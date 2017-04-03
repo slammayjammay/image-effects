@@ -2,9 +2,10 @@
 const { remote, nativeImage } = window.require('electron');
 const { dialog } = remote;
 
-import { basename, extname } from 'path';
+import { basename, extname, join } from 'path';
 import fs from 'fs';
 import imageSize from 'image-size';
+import ffmpeg from 'fluent-ffmpeg';
 import {
 	Vector3,
 	Scene,
@@ -16,7 +17,8 @@ import {
 	BoxGeometry,
 	MeshBasicMaterial,
 	Mesh,
-	AmbientLight
+	AmbientLight,
+	LinearFilter
 } from 'three';
 import { EffectComposer, RenderPass } from 'postprocessing';
 import { PixelPass } from './effects';
@@ -49,8 +51,8 @@ selectImageButton.addEventListener('click', () => {
 body.ondragover = () => false;
 body.ondragleave = body.ondragend = () => false;
 body.ondrop = e => {
-	let imagePath = e.dataTransfer.files[0].path;
-	buildCanvas(imagePath);
+	let filePath = e.dataTransfer.files[0].path;
+	buildCanvas(filePath);
 
 	return false;
 }
@@ -60,10 +62,10 @@ body.ondrop = e => {
 // ==================================================
 
 // loads image, loads texture, creates threejs scene
-async function buildCanvas(imagePath) {
+async function buildCanvas(filePath) {
 	selectImageButton.style.display = 'none';
 
-	await loadImage(imagePath);
+	await loadFile(filePath);
 	addEffectControls();
 
 	renderer.render(scene, camera);
@@ -74,18 +76,51 @@ async function buildCanvas(imagePath) {
 
 	// on submit, save image
 	submitButton.addEventListener('click', () => {
-		saveImage(imagePath);
+		saveImage(filePath);
 	});
 }
 
 // loads texture and creates scene (canvas dimensions dependent on image)
-async function loadImage(imagePath) {
-	let { width: imgWidth, height: imgHeight } = imageSize(imagePath);
+async function loadFile(filePath) {
+	let { imgWidth, imgHeight } = await getImageSize(filePath);
 	let imageAspect = imgWidth / imgHeight;
 
-	initScene(imgWidth, imgHeight);
+	let imageToDraw;
 
-	let texture = await loadTexture(imagePath);
+	if (['.mp4'].includes(extname(filePath))) {
+		imageToDraw = await loadVideo(filePath);
+		imageToDraw.loop = true;
+		imageToDraw.play();
+
+		// play the video
+		const animate = () => {
+			requestAnimationFrame(animate);
+			canvasContext.drawImage(imageToDraw, 0, 0);
+			texture.needsUpdate = true;
+			composer.render(scene, camera)
+		};
+		requestAnimationFrame(animate);
+	} else {
+		imageToDraw = await loadImage(filePath);
+	}
+
+	// create canvas (to be used as texture later)
+	let canvasEl = document.createElement('canvas');
+	canvasEl.width = imgWidth;
+	canvasEl.height = imgHeight;
+
+	// draw the image or video on the canvas
+	let canvasContext = canvasEl.getContext('2d');
+	// canvasContext.fillStyle = '#000000';
+	// canvasContext.fillRect(0, 0, imgWidth, imgHeight);
+	canvasContext.drawImage(imageToDraw, 0, 0);
+
+	let texture = new Texture(canvasEl);
+	texture.needsUpdate = true;
+	texture.minFilter = LinearFilter;
+	texture.magFilter = LinearFilter;
+
+	initScene(imgWidth, imgHeight);
 
 	// create mesh
 	let geometry = new PlaneGeometry(imgWidth, imgHeight);
@@ -102,6 +137,19 @@ async function loadImage(imagePath) {
 
 	return Promise.resolve();
 };
+
+function getImageSize(filePath) {
+	return new Promise((resolve, reject) => {
+		ffmpeg.ffprobe(filePath, (err, data) => {
+			err && console.error(err);
+
+			resolve({
+				imgWidth: data.streams[0].width,
+				imgHeight: data.streams[0].height
+			});
+		});
+	});
+}
 
 // create threejs scene
 function initScene(imgWidth, imgHeight) {
@@ -121,7 +169,7 @@ function initScene(imgWidth, imgHeight) {
 	if (imageAspect >= viewportAspect) {
 		[renderWidth, renderHeight] = [innerWidth, innerWidth / imageAspect];
 	} else {
-		[renderWidth, renderHeight] = [innerHeight / imageAspect, innerHeight];
+		[renderWidth, renderHeight] = [innerHeight * imageAspect, innerHeight];
 	}
 	renderer.setSize(renderWidth, renderHeight);
 
@@ -133,11 +181,22 @@ function initScene(imgWidth, imgHeight) {
 	camera.lookAt(new Vector3(0, 0, 0));
 }
 
-// promise wrapper for threejs's TextureLoader
-function loadTexture(imagePath) {
-	let loader = new TextureLoader();
+// promise wrapper for loading a video element
+function loadVideo(filePath) {
 	return new Promise((resolve, reject) => {
-		loader.load(imagePath, resolve, null, reject);
+		let videoEl = document.createElement('video');
+		videoEl.src = filePath;
+		videoEl.load();
+		videoEl.addEventListener('canplay', () => resolve(videoEl));
+	});
+}
+
+// promise wrapper for loading an image element
+function loadImage(filePath) {
+	return new Promise((resolve, reject) => {
+		let imageEl = document.createElement('img');
+		imageEl.src = filePath;
+		imageEl.addEventListener('load', () => resolve(imageEl));
 	});
 }
 
@@ -173,14 +232,14 @@ function addEffectControls() {
 }
 
 // saves image
-function saveImage(imagePath) {
+function saveImage(filePath) {
 	// get image from canvas
 	let dataURL = canvas.toDataURL('image/png', 1);
 	let image = nativeImage.createFromDataURL(dataURL).toPNG();
 
 	// append "-effected" to original file name
-	let ext = extname(imagePath);
-	let filename = basename(imagePath, ext);
+	let ext = extname(filePath);
+	let filename = basename(filePath, ext);
 	filename += '-effected.png';
 
 	// save image
