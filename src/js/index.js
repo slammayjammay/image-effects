@@ -215,7 +215,7 @@ function addEffectControls() {
 		height: (passes.length - 1) * 32 - 1
 	});
 
-	gui.add(pixelOptions, 'granularity').min(5).max(2000).step(5).onChange(() => {
+	gui.add(pixelOptions, 'granularity').min(3).max(2000).step(5).onChange(() => {
 		composer.render();
 	});
 
