@@ -20,6 +20,11 @@ const fragmentShader = [
 		'float fractX = floor(vUv.x * granularity) / granularity;',
 		'float fractY = floor(vUv.y * granularity) / granularity;',
 
+		'if (granularity >= 2000.0) {',
+			'fractX = vUv.x;',
+			'fractY = vUv.y;',
+		'}',
+
 		'vec2 newPos = vec2(fractX, fractY);',
 
 		'gl_FragColor = texture2D(tDiffuse, newPos);',
