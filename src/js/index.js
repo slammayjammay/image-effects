@@ -111,8 +111,6 @@ async function loadFile(filePath) {
 
 	// draw the image or video on the canvas
 	let canvasContext = canvasEl.getContext('2d');
-	// canvasContext.fillStyle = '#000000';
-	// canvasContext.fillRect(0, 0, imgWidth, imgHeight);
 	canvasContext.drawImage(imageToDraw, 0, 0);
 
 	let texture = new Texture(canvasEl);
@@ -204,7 +202,7 @@ function loadImage(filePath) {
 function addEffectControls() {
 	composer = new EffectComposer(renderer);
 
-	// create options for effects
+	// pixel controls
 	let pixelOptions = { granularity: 150	};
 
 	// create effects
@@ -213,6 +211,14 @@ function addEffectControls() {
 		new PixelPass(pixelOptions)
 	]
 
+	gui = new dat.GUI({
+		height: (passes.length - 1) * 32 - 1
+	});
+
+	gui.add(pixelOptions, 'granularity').min(5).max(2000).step(5).onChange(() => {
+		composer.render();
+	});
+
 	// add in each effect
 	for (let i = 0; i < passes.length; i++) {
 		if (i === passes.length - 1) {
@@ -220,15 +226,6 @@ function addEffectControls() {
 		}
 		composer.addPass(passes[i]);
 	}
-
-	gui = new dat.GUI({
-		height: (passes.length - 1) * 32 - 1
-	});
-
-	// add pixelation controls
-	gui.add(pixelOptions, 'granularity').min(10).max(4096).step(5).onChange(() => {
-		composer.render();
-	});
 }
 
 // saves image
