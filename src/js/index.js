@@ -1,27 +1,23 @@
 // not sure why I need to use window.require
 const { remote, nativeImage } = window.require('electron');
+// TODO: just use remote.dialog()
 const { dialog } = remote;
 
+// node modules
 import { basename, extname, join } from 'path';
 import fs from 'fs';
+import { exec } from 'child_process';
+// npm modules
 import imageSize from 'image-size';
-import ffmpeg from 'fluent-ffmpeg';
 import {
-	Vector3,
-	Scene,
-	PerspectiveCamera,
-	WebGLRenderer,
-	Texture,
-	TextureLoader,
-	PlaneGeometry,
-	BoxGeometry,
-	MeshBasicMaterial,
-	Mesh,
-	AmbientLight,
+	Vector3, Scene, PerspectiveCamera, WebGLRenderer, Texture, TextureLoader,
+	PlaneGeometry, BoxGeometry, MeshBasicMaterial, Mesh, AmbientLight,
 	LinearFilter
 } from 'three';
 import { EffectComposer, RenderPass } from 'postprocessing';
+// relative modules
 import { PixelPass } from './effects';
+const ffmpeg = join(__dirname, '../../assets/ffmpeg/3.2.4/bin/ffmpeg');
 
 // ==================================================
 // "global" variables
@@ -138,13 +134,18 @@ async function loadFile(filePath) {
 
 function getImageSize(filePath) {
 	return new Promise((resolve, reject) => {
-		ffmpeg.ffprobe(filePath, (err, data) => {
-			err && console.error(err);
+		let command = `ffprobe -v error -show_entries stream=width,height -of default=noprint_wrappers=1 ${filePath}`;
+		exec(command, (err, data) => {
+			if (err) {
+				console.error(err);
+				alert(`Could not read width or height of ${filePath}`);
+				return;
+			}
 
-			resolve({
-				imgWidth: data.streams[0].width,
-				imgHeight: data.streams[0].height
-			});
+			let output = data.toString().trim().replace('\n', ' ');
+			let [_, imgWidth, imgHeight] = /width=(\d+) height=(\d+)/.exec(output);
+
+			resolve({ imgWidth, imgHeight });
 		});
 	});
 }
