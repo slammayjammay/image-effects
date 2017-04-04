@@ -3,12 +3,11 @@
   "description": "Adds in effects to an image",
   "main": "main.js",
   "scripts": {
-    "build": "npm run webpack && npm run assets",
-    "bundle": "npm run build && rm -rf out && electron-packager . image-effects --out=out --ignore=\"(node_modules|src|assets)\"",
+    "build": "npm run webpack",
+    "bundle": "npm run build && rm -rf out && electron-packager . image-effects --out=out --ignore=\"(node_modules|src)\"",
     "clean": "rm -rf dist",
     "dev": "webpack --watch -d",
     "electron": "electron .",
-    "assets": "cp assets/dat.gui.min.js dist/dat.gui.min.js",
     "webpack": "webpack"
   },
   "keywords": [
@@ -18,6 +17,7 @@
   "author": "Scott McKenzie",
   "license": "ISC",
   "dependencies": {
+    "dat-gui": "^0.5.0",
     "fluent-ffmpeg": "^2.1.0",
     "image-size": "^0.5.1",
     "postprocessing": "^2.1.0",
