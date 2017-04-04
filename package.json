@@ -3,12 +3,12 @@
   "description": "Adds in effects to an image",
   "main": "main.js",
   "scripts": {
-    "build": "npm run webpack && npm run vendor",
-    "bundle": "npm run build && rm -rf out && electron-packager . image-effects --out=out --ignore=\"(node_modules|src|vendor)\"",
+    "build": "npm run webpack && npm run assets",
+    "bundle": "npm run build && rm -rf out && electron-packager . image-effects --out=out --ignore=\"(node_modules|src|assets)\"",
     "clean": "rm -rf dist",
     "dev": "webpack --watch -d",
     "electron": "electron .",
-    "vendor": "cp vendor/dat.gui.min.js dist/dat.gui.min.js",
+    "assets": "cp assets/dat.gui.min.js dist/dat.gui.min.js",
     "webpack": "webpack"
   },
   "keywords": [
