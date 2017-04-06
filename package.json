@@ -17,7 +17,7 @@
     "effects"
   ],
   "author": "Scott McKenzie",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "dat-gui": "^0.5.0",
     "postprocessing": "^2.1.0",
