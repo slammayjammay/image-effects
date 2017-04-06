@@ -146,10 +146,11 @@ function getImageSize(filePath) {
 				return;
 			}
 
-			let output = data.toString().trim().replace('\n', ' ');
-			let [_, imgWidth, imgHeight] = /width=(\d+) height=(\d+)/.exec(output);
+			let output = data.toString();
+			let regex = /width=(\d+)\s*height=(\d+)/;
+			let [_, imgWidth, imgHeight] = regex.exec(output);
 
-			resolve({ imgWidth, imgHeight });
+			resolve({ imgWidth: parseInt(imgWidth), imgHeight: parseInt(imgHeight) });
 		});
 	});
 }
