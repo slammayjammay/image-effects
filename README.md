@@ -15,11 +15,6 @@ $ npm run build && npm run electron
 
 Or package it as a distributable app:
 ```sh
-$ npm run bundle
-```
-
-## Note:
-This relies on `ffmpeg`, which needs to be in your `$PATH` in order to work. If you're on a mac and have Homebrew installed, you can simply run:
-```sh
-$ brew install ffmpeg
+$ npm run package:darwin # for macs
+$ npm run package:win32 # for windows
 ```
