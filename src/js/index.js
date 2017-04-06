@@ -17,7 +17,7 @@ import {
 } from 'three';
 
 // relative modules
-import { PixelPass } from './effects';
+import { PixelPass, GrayscalePass } from './effects';
 import execBinary from './exec-binary';
 
 // ==================================================
@@ -207,20 +207,26 @@ function loadImage(filePath) {
 function addEffectControls() {
 	composer = new EffectComposer(renderer);
 
-	// pixel controls
-	let pixelOptions = { granularity: 150	};
+	// controls
+	let pixelOptions = { granularity: 2000	};
+	let grayscaleOptions = { intensity: 0 }
 
 	// create effects
 	let passes = [
 		new RenderPass(scene, camera),
-		new PixelPass(pixelOptions)
-	]
+		new PixelPass(pixelOptions),
+		new GrayscalePass(grayscaleOptions)
+	];
 
 	gui = new dat.GUI({
 		height: (passes.length - 1) * 32 - 1
 	});
 
 	gui.add(pixelOptions, 'granularity').min(3).max(2000).step(5).onChange(() => {
+		composer.render();
+	});
+
+	gui.add(grayscaleOptions, 'intensity').min(0).max(1).onChange(() => {
 		composer.render();
 	});
 
