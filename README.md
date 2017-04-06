@@ -1,20 +1,21 @@
 # Image Effects
+This is mostly a playground to play around with WebGL fragment shaders using `three.js`. Currently there is only one effect (pixelation) but there may be more in the future.
 
-This is mostly a playground to play around with WebGL fragment shaders using THREE.js. Currently there is only one effect to adjust (pixelation) but there may be more in the future.
+## Download
+- [macOS](https://github.com/slammayjammay/image-effects/releases/download/v1.0.0/image-effects-darwin-x64.zip)
+- [windows](https://github.com/slammayjammay/image-effects/releases/download/v1.0.0/image-effects-win32-x64.zip)
+
+## Run locally
 
 ```sh
 $ git clone https://github.com/slammayjammay/image-effects.git
 $ cd image-effects
 $ npm install
+$ npm run electron
 ```
 
-Run the repo as an electron app:
+To package as a distributable using `electron-packager`:
 ```sh
-$ npm run build && npm run electron
-```
-
-Or package it as a distributable app:
-```sh
-$ npm run package:darwin # for macs
-$ npm run package:win32 # for windows
+$ npm run package:darwin # mac
+$ npm run package:win32 # windows
 ```
