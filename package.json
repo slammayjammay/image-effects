@@ -20,7 +20,6 @@
   "license": "ISC",
   "dependencies": {
     "dat-gui": "^0.5.0",
-    "fluent-ffmpeg": "^2.1.0",
     "postprocessing": "^2.1.0",
     "three": "^0.84.0"
   },
