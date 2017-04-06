@@ -8,8 +8,8 @@
     "dev": "webpack --watch -d",
     "electron": "electron .",
     "package:all": "npm run package:darwin & npm run package:win32",
-    "package:darwin": "electron-packager . image-effects --platform=darwin --out=out --ignore=\"(node_modules|src|assets\/(?!darwin))\"",
-    "package:win32": "electron-packager . image-effects --platform=win32 --out=out --ignore=\"(node_modules|src|assets\/(?!win32))\"",
+    "package:darwin": "electron-packager . image-effects --platform=darwin --out=out --ignore=\"(node_modules|src|assets/(?!darwin))\"",
+    "package:win32": "electron-packager . image-effects --platform=win32 --out=out --ignore=\"(node_modules|src|assets/(?!win32))\"",
     "webpack": "webpack"
   },
   "keywords": [
