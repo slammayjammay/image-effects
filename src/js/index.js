@@ -8,7 +8,6 @@ import fs from 'fs';
 import { exec } from 'child_process';
 
 // npm modules
-import imageSize from 'image-size';
 import dat from 'dat-gui';
 import { EffectComposer, RenderPass } from 'postprocessing';
 import {
