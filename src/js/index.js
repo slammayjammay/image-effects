@@ -24,7 +24,7 @@ import execBinary from './exec-binary';
 // ==================================================
 // "global" variables
 // ==================================================
-let scene, camera, renderer, composer, gui;
+let scene, camera, renderer, composer, gui, videoController;
 
 // ==================================================
 // DOM els
@@ -90,35 +90,29 @@ async function loadFile(filePath) {
 
 	let imageToDraw;
 
-	if (['.mp4'].includes(extname(filePath))) {
-		let videoController = new VideoController();
-		imageToDraw = await videoController.load(filePath);
-
-		// play the video
-		const animate = () => {
-			requestAnimationFrame(animate);
-			canvasContext.drawImage(imageToDraw, 0, 0);
-			texture.needsUpdate = true;
-			composer.render(scene, camera)
-		};
-		requestAnimationFrame(animate);
-	} else {
-		imageToDraw = await loadImage(filePath);
-	}
-
 	// create canvas (to be used as texture later)
 	let canvasEl = document.createElement('canvas');
 	canvasEl.width = imgWidth;
 	canvasEl.height = imgHeight;
-
-	// draw the image or video on the canvas
 	let canvasContext = canvasEl.getContext('2d');
-	canvasContext.drawImage(imageToDraw, 0, 0);
 
 	let texture = new Texture(canvasEl);
 	texture.needsUpdate = true;
 	texture.minFilter = LinearFilter;
 	texture.magFilter = LinearFilter;
+
+	if (['.mp4'].includes(extname(filePath))) {
+		videoController = new VideoController();
+		imageToDraw = await videoController.load(filePath);
+
+		videoController.everyTick(() => {
+		 	canvasContext.drawImage(imageToDraw, 0, 0);
+		 	texture.needsUpdate = true;
+		 	composer.render(scene, camera);
+		});
+	} else {
+		imageToDraw = await loadImage(filePath);
+	}
 
 	initScene(imgWidth, imgHeight);
 
