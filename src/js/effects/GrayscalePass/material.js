@@ -28,15 +28,17 @@ const fragmentShader = [
 	'void main() {',
 		'vec4 color = texture2D(tDiffuse, vUv);',
 
-		// magic grayscale
-		'float brightness = (color.r * 3.0 + color.g * 4.0 + color.b);',
-		'brightness = brightness * pow(0.5, 3.0);',
+		// formula for grayscale. See https://en.wikipedia.org/wiki/Luma_%28video%29
+		'float rCoef = 0.2126;',
+		'float gCoef = 0.7152;',
+		'float bCoef = 0.0722;',
 
-		// brightness is the new color for r, g, b. Get the diff between each
-		// color's current value and brightness (full intensity grayscale),
-		// multiply it by intensity, then subtract it from the original color. It
-		// seems to work well.
-		'vec4 diff = colorDiff(color, brightness);',
+		'float gray = (color.r * rCoef + color.g * gCoef + color.b * bCoef);',
+
+		// gray is the full intensity grayscale. To allow for a spectrum of
+		// intensity, find the difference between the two colors and fluctuate
+		// between those values
+		'vec4 diff = colorDiff(color, gray);',
 		'vec4 newColor = color - diff * intensity;',
 
 		'gl_FragColor = newColor;',
