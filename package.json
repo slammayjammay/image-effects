@@ -20,6 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "dat-gui": "^0.5.0",
+    "gsap": "^1.19.1",
     "postprocessing": "^2.1.0",
     "three": "^0.84.0"
   },
@@ -31,6 +32,7 @@
     "raw-loader": "^0.5.1",
     "sass-loader": "^6.0.3",
     "style-loader": "^0.16.1",
+    "url-loader": "^0.5.8",
     "webpack": "^2.3.2"
   }
 }
