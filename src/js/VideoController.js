@@ -12,6 +12,14 @@ class VideoController {
 
 		this.playIcon = join(app.getAppPath(), './images/play-icon.png');
 		this.pauseIcon = join(app.getAppPath(), './images/pause-icon.png');
+
+		this._everyTickCallbacks = [];
+
+		const everyTick = () => {
+			window.requestAnimationFrame(everyTick);
+			this._everyTickCallbacks.forEach(callback => callback());
+		};
+		everyTick();
 	}
 
 	load(filePath) {
@@ -36,11 +44,9 @@ class VideoController {
 		// play / pause
 		this.playButton.addEventListener('click', () => {
 			if (this.videoEl.paused) {
-				this.videoEl.play();
-				this.playButton.style.backgroundImage = `url(${this.pauseIcon})`;
+				this.play();
 			} else {
-				this.videoEl.pause();
-				this.playButton.style.backgroundImage = `url(${this.playIcon})`;
+				this.pause();
 			}
 		});
 		// update when video ends as well
@@ -94,6 +100,20 @@ class VideoController {
 
 	fadeOutControls() {
 		TweenMax.to(this.controlsEl, 0.5, { opacity: 0 });
+	}
+
+	everyTick(callback) {
+		this._everyTickCallbacks.push(callback);
+	}
+
+	play() {
+		this.videoEl.play();
+		this.playButton.style.backgroundImage = `url(${this.pauseIcon})`;
+	}
+
+	pause() {
+		this.videoEl.pause();
+		this.playButton.style.backgroundImage = `url(${this.playIcon})`;
 	}
 }
 
