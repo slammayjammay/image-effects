@@ -17,6 +17,7 @@ import {
 } from 'three';
 
 // relative modules
+import VideoController from './VideoController';
 import { PixelPass, GrayscalePass } from './effects';
 import execBinary from './exec-binary';
 
@@ -37,12 +38,15 @@ const submitButton = document.querySelector('.submit');
 // Event listeners
 // ==================================================
 // load image from electron dialog...
-selectImageButton.addEventListener('click', () => {
+const selectImageFn = () => {
 	dialog.showOpenDialog(filePaths => {
 		let filePath = filePaths[0];
 		buildCanvas(filePath);
 	});
-});
+
+	selectImageButton.removeEventListener('click', selectImageFn);
+}
+selectImageButton.addEventListener('click', selectImageFn);
 
 // ...or load image from a file drop
 body.ondragover = () => false;
@@ -50,6 +54,8 @@ body.ondragleave = body.ondragend = () => false;
 body.ondrop = e => {
 	let filePath = e.dataTransfer.files[0].path;
 	buildCanvas(filePath);
+
+	body.ondrop = null;
 
 	return false;
 }
@@ -85,9 +91,8 @@ async function loadFile(filePath) {
 	let imageToDraw;
 
 	if (['.mp4'].includes(extname(filePath))) {
-		imageToDraw = await loadVideo(filePath);
-		imageToDraw.loop = true;
-		imageToDraw.play();
+		let videoController = new VideoController();
+		imageToDraw = await videoController.load(filePath);
 
 		// play the video
 		const animate = () => {
