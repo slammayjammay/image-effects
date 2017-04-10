@@ -14,6 +14,10 @@ const headJS = {
 					{ loader: 'css-loader' },
 					{ loader: 'sass-loader' }
 				]
+			},
+			{
+				test: /\.(jpg|png)$/,
+				loader: 'url-loader'
 			}
 		]
 	}
@@ -40,6 +44,10 @@ const mainJS = {
 			{
 				test: /(\.frag|\.vert)/,
 				loader: 'raw-loader'
+			},
+			{
+				test: /\.(jpg|png)$/,
+				loader: 'url-loader'
 			}
 		]
 	}
