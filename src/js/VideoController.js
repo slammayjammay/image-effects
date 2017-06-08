@@ -1,25 +1,20 @@
 const { app } = window.require('electron').remote;
 import { join } from 'path';
+import EventEmitter from 'events';
 import 'gsap';
 
 const DELAY_UNTIL_FADEOUT = 1000;
 
-class VideoController {
+class VideoController extends EventEmitter {
 	constructor() {
+		super();
+
 		this.controlsEl = document.querySelector('.video-controls');
 		this.playButton = this.controlsEl.querySelector('.play-pause');
 		this.seekerEl = this.controlsEl.querySelector('.seek');
 
 		this.playIcon = join(app.getAppPath(), './images/play-icon.png');
 		this.pauseIcon = join(app.getAppPath(), './images/pause-icon.png');
-
-		this._everyTickCallbacks = [];
-
-		const everyTick = () => {
-			window.requestAnimationFrame(everyTick);
-			this._everyTickCallbacks.forEach(callback => callback());
-		};
-		everyTick();
 	}
 
 	load(filePath) {
@@ -33,7 +28,8 @@ class VideoController {
 				resolve(this.videoEl);
 
 				this.videoEl.removeEventListener('canplay', onLoad);
-			}
+			};
+
 			this.videoEl.addEventListener('canplay', onLoad);
 		});
 	}
@@ -79,12 +75,13 @@ class VideoController {
 		});
 
 		// fade in / fade out controls
-		let canvas = document.querySelector('canvas');
-		canvas.addEventListener('mousemove', () => {
+		document.body.addEventListener('mousemove', e => {
 			this.fadeInControls();
-
 			clearTimeout(this.id);
-			this.id = setTimeout(() => this.fadeOutControls(), DELAY_UNTIL_FADEOUT);
+
+			if (!this.controlsEl.contains(e.target)) {
+				this.id = setTimeout(() => this.fadeOutControls(), DELAY_UNTIL_FADEOUT);
+			}
 		});
 
 		// always show controls on hover
@@ -102,18 +99,28 @@ class VideoController {
 		TweenMax.to(this.controlsEl, 0.5, { opacity: 0 });
 	}
 
-	everyTick(callback) {
-		this._everyTickCallbacks.push(callback);
-	}
-
 	play() {
 		this.videoEl.play();
 		this.playButton.style.backgroundImage = `url(${this.pauseIcon})`;
+
+		const play = () => {
+			this.playId = requestAnimationFrame(play);
+			this.emit('draw');
+		};
+
+		play();
 	}
 
 	pause() {
 		this.videoEl.pause();
 		this.playButton.style.backgroundImage = `url(${this.playIcon})`;
+
+		cancelAnimationFrame(this.playId);
+	}
+
+	restart() {
+		this.videoEl.pause();
+		this.videoEl.currentTime = 0;
 	}
 }
 
