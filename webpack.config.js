@@ -29,7 +29,7 @@ const main = {
 	output: {
 		path: __dirname + '/dist',
 		publicPath: 'dist/',
-		filename: 'built.js'
+		filename: 'main.js'
 	},
 	module: {
 		loaders: [
@@ -54,12 +54,12 @@ const main = {
 };
 
 const videoFrameRenderer = {
-	entry: './src/js/video-saver/script.js',
+	entry: './src/js/video-saver/video-saver.js',
 	target: 'node',
 	output: {
-		path: `${__dirname}/src/js/video-saver/`,
-		// publicPath: 'dist/',
-		filename: 'script-built.js'
+		path: __dirname + `/dist`,
+		publicPath: 'dist/',
+		filename: 'video-saver.js'
 	}
 };
 

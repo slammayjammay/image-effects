@@ -108,12 +108,18 @@ class VideoSaver extends EventEmitter {
 		this.processes = {};
 
 		for (let i = 0; i < num; i++) {
-			const browserWindow = new BrowserWindow({ show: false });
+			const browserWindow = new BrowserWindow({ show: true });
 			browserWindow.loadURL(format({
-				pathname: join(app.getAppPath(), './src/js/video-saver/index.html'),
+				pathname: join(app.getAppPath(), './video-saver.html'),
 				protocol: 'file:',
 				slashes: true
 			}));
+
+			browserWindow.webContents.openDevTools();
+
+			browserWindow.on('error', message => {
+				throw message;
+			});
 
 			this.processes[browserWindow.id] = {
 				browserWindow,
