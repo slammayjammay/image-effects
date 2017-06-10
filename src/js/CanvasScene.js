@@ -51,7 +51,10 @@ class CanvasScene {
 		// TODO: Investigate: Instantiating a shader pass before instantiating the
 		// composer results in some pretty bizarre rendering.
 		this.composer = new EffectComposer(this.renderer);
-		this.composer.addPass(new RenderPass(this.scene, this.camera));
+		const renderPass = new RenderPass(this.scene, this.camera);
+		renderPass.renderToScreen = true;
+		this.lastPass = renderPass;
+		this.composer.addPass(renderPass);
 
 		// create texture
 		this.texture = new Texture(this.textureEl);
@@ -119,7 +122,12 @@ class CanvasScene {
 			return new Constructor(options);
 		});
 
-		passes[passes.length - 1].renderToScreen = true;
+		// make sure only to render the last pass to the screen
+		this.lastPass.renderToScreen = false;
+		const lastPass = passes[passes.length - 1];
+		lastPass.renderToScreen = true;
+		this.lastPass = lastPass;
+
 		passes.forEach(pass => this.composer.addPass(pass));
 	}
 
