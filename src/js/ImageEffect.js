@@ -222,20 +222,19 @@ class ImageEffect {
 
 		this.progressBar.show();
 
-		const videoSaver = new VideoSaver(this.uploadPath, savePath);
-		videoSaver.addPasses(this.passes);
+		const videoSaver = new VideoSaver(this.uploadPath, savePath, this.passes);
+		videoSaver.on('progress', progress => this.progressBar.update(progress));
 
 		videoSaver.on('extracting', () => this.progressBar.text('Extracting video frames...'));
 		videoSaver.on('rendering', () => this.progressBar.text('Rendering video frames...'));
 		videoSaver.on('creating', () => this.progressBar.text('Creating video...'));
+
 		videoSaver.on('done', () => {
 			this.progressBar.text('Done!');
 			setTimeout(() => this.progressBar.hide(), 2000);
 		});
 
-		videoSaver.on('progress', progress => this.progressBar.update(progress));
-
-		await videoSaver.save(savePath);
+		videoSaver.save();
 	}
 }
 

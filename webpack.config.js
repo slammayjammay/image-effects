@@ -1,4 +1,4 @@
-const headJS = {
+const head = {
 	entry: './src/js/head.js',
 	output: {
 		path: __dirname + '/dist',
@@ -23,7 +23,7 @@ const headJS = {
 	}
 };
 
-const mainJS = {
+const main = {
 	entry: './src/js/index.js',
 	target: 'node',
 	output: {
@@ -53,4 +53,14 @@ const mainJS = {
 	}
 };
 
-module.exports = [headJS, mainJS];
+const videoFrameRenderer = {
+	entry: './src/js/video-saver/script.js',
+	target: 'node',
+	output: {
+		path: `${__dirname}/src/js/video-saver/`,
+		// publicPath: 'dist/',
+		filename: 'script-built.js'
+	}
+};
+
+module.exports = [head, main, videoFrameRenderer];
