@@ -9,7 +9,8 @@ const BINARIES = {
 		win32: './assets/win32/ffmpeg-3.2.4-win64-static/bin/ffprobe.exe'
 	},
 	ffmpeg: {
-		darwin: './assets/darwin/ffmpeg/3.2.4/bin/ffmpeg'
+		darwin: './assets/darwin/ffmpeg/3.2.4/bin/ffmpeg',
+		win32: './assets/win32/ffmpeg-3.2.4-win64-static/bin/ffmpeg.exe'
 	}
 };
 
