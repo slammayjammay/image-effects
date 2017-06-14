@@ -7,7 +7,7 @@ import { exec } from 'child_process';
 import execBinary from '../exec-binary';
 import CanvasScene from '../CanvasScene';
 
-const NUM_PROCESSES = 4;
+const NUM_PROCESSES = 2;
 
 class VideoSaver extends EventEmitter {
 	constructor(videoPath, savePath, passes = []) {
@@ -108,14 +108,12 @@ class VideoSaver extends EventEmitter {
 		this.processes = {};
 
 		for (let i = 0; i < num; i++) {
-			const browserWindow = new BrowserWindow({ show: true });
+			const browserWindow = new BrowserWindow({ show: false });
 			browserWindow.loadURL(format({
 				pathname: join(app.getAppPath(), './video-saver.html'),
 				protocol: 'file:',
 				slashes: true
 			}));
-
-			browserWindow.webContents.openDevTools();
 
 			browserWindow.on('error', message => {
 				throw message;
