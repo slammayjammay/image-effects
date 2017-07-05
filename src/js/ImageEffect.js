@@ -99,12 +99,6 @@ class ImageEffect {
 		this.mainScene.render();
 	}
 
-	// clonePasses() {
-	// 	return this.passes.map(({ Constructor, options }) => {
-	// 		return new Constructor(options);
-	// 	});
-	// }
-
 	addPixelPass() {
 		this.pixelOptions = { granularity: 2000	};
 		this.gui.add(this.pixelOptions, 'granularity').min(3).max(2000).step(5).onChange(() => {
@@ -115,9 +109,9 @@ class ImageEffect {
 	}
 
 	addGrayscalePass() {
-		this.grayscaleOptions = { intensity: 0 }
+		this.grayscaleOptions = { intensity: 0 };
 
-		// allows for custom gui message, instead of using the object property
+		// allows for custom gui message, instead of using the object property string
 		let dummyGrayscale = { 'grayscale intensity': this.grayscaleOptions.intensity };
 
 		this.gui.add(dummyGrayscale, 'grayscale intensity').min(0).max(1).onChange(value => {
